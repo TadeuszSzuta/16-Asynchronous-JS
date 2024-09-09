@@ -98,8 +98,17 @@ const renderCountryHTML = function (data, className = '') {
 
 // Modern way
 
+// Country 1
 const getCountryData = function (country) {
   fetch(`https://restcountries.com/v3.1/name/${country}`)
+    .then(response => response.json())
+    .then(data => {
+      renderCountryHTML(data[0]);
+
+      // Country 2
+      const neighbour = data[0].borders?.[0];
+      return fetch(`https://restcountries.com/v3.1/alpha/${neighbour}`);
+    })
     .then(response => response.json())
     .then(data => renderCountryHTML(data[0]));
 };
