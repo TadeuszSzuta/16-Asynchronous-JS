@@ -60,32 +60,42 @@ const renderCountryHTML = function (data, className = '') {
   countriesContainer.insertAdjacentHTML('beforeend', html);
 };
 
-const getCountryAndNeighbour = function (country) {
-  // Creating new AJAX request
-  const request = new XMLHttpRequest();
-  request.open('GET', `https://restcountries.com/v3.1/name/${country}`);
-  request.send();
+// const getCountryAndNeighbour = function (country) {
+//   // Creating new AJAX request
+//   const request = new XMLHttpRequest();
+//   request.open('GET', `https://restcountries.com/v3.1/name/${country}`);
+//   request.send();
 
-  // Listening for data to arrive
-  request.addEventListener('load', function () {
-    const [data] = JSON.parse(this.responseText);
+//   // Listening for data to arrive
+//   request.addEventListener('load', function () {
+//     const [data] = JSON.parse(this.responseText);
 
-    // Generating HTML to present data about country
-    renderCountryHTML(data);
+//     // Generating HTML to present data about country
+//     renderCountryHTML(data);
 
-    // Get neighbour country
-    const neighbour = data.borders?.[0];
-    const request2 = new XMLHttpRequest();
+//     // Get neighbour country
+//     const neighbour = data.borders?.[0];
+//     const request2 = new XMLHttpRequest();
 
-    request2.open('GET', `https://restcountries.com/v3.1/alpha/${neighbour}`);
-    request2.send();
+//     request2.open('GET', `https://restcountries.com/v3.1/alpha/${neighbour}`);
+//     request2.send();
 
-    request2.addEventListener('load', function () {
-      const [data] = JSON.parse(this.responseText);
+//     request2.addEventListener('load', function () {
+//       const [data] = JSON.parse(this.responseText);
 
-      renderCountryHTML(data, 'neighbour');
-    });
-  });
-};
+//       renderCountryHTML(data, 'neighbour');
+//     });
+//   });
+// };
 
-getCountryAndNeighbour('Poland');
+// getCountryAndNeighbour('Poland');
+
+// How it used to be - HTTPRequest
+// Creating new AJAX request
+//   const request = new XMLHttpRequest();
+//   request.open('GET', `https://restcountries.com/v3.1/name/${country}`);
+//   request.send();
+
+// Modern way
+const request = fetch(`https://restcountries.com/v3.1/name/${'Poland'}`);
+console.log(request);
