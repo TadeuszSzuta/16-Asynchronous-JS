@@ -97,5 +97,11 @@ const renderCountryHTML = function (data, className = '') {
 //   request.send();
 
 // Modern way
-const request = fetch(`https://restcountries.com/v3.1/name/${'Poland'}`);
-console.log(request);
+
+const getCountryData = function (country) {
+  fetch(`https://restcountries.com/v3.1/name/${country}`)
+    .then(response => response.json())
+    .then(data => renderCountryHTML(data[0]));
+};
+
+getCountryData('Poland');
