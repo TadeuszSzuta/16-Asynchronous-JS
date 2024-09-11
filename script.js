@@ -106,17 +106,27 @@ const renderError = function (msg) {
 // Modern way
 
 // Country 1
+
+const getJSON = function (url, errMsg = 'Something went wrong') {
+  return fetch(`${url}`).then(response => {
+    if (!response.ok) {
+      throw new Error(`${errMsg} (${response.status})`);
+    }
+    return response.json();
+  });
+};
+
 const getCountryData = function (country) {
-  fetch(`https://restcountries.com/v3.1/name/${country}`)
-    .then(response => response.json())
+  getJSON(`https://restcountries.com/v3.1/name/${country}`, 'Country not found')
     .then(data => {
       renderCountryHTML(data[0]);
 
       // Country 2
       const neighbour = data[0].borders?.[0];
-      return fetch(`https://restcountries.com/v3.1/alpha/${neighbour}`);
+
+      getJSON;
     })
-    .then(response => response.json())
+
     .then(data => renderCountryHTML(data[0], 'neighbour'))
     .catch(err => {
       console.error(`😡😡😡 ${err.message}`);
