@@ -1,6 +1,34 @@
 'use strict';
+
 const btn = document.querySelector('.btn-country');
 const countriesContainer = document.querySelector('.countries');
+
+const renderCountryHTML = function (data, className = '') {
+  const html = `<article class="country ${className}">
+          <img class="country__img " src="${data.flags.svg}" />
+          <div class="country__data">
+            <h3 class="country__name">${data.name.common}</h3>
+            <h4 class="country__region">${data.region}</h4>
+            <p class="country__row"><span>👫</span>${(
+              +data.population / 1000000
+            ).toFixed(1)}M</p>
+            <p class="country__row"><span>🗣️</span>${
+              data.languages[Object.keys(data.languages)[0]]
+            }</p>
+            <p class="country__row"><span>💰</span>${
+              data.currencies[Object.keys(data.currencies)[0]].name
+            }</p>
+          </div>
+        </article>`;
+
+  countriesContainer.insertAdjacentHTML('beforeend', html);
+  // countriesContainer.style.opacity = 1;
+};
+
+const renderError = function (msg) {
+  countriesContainer.insertAdjacentText('beforeend', msg);
+  // countriesContainer.style.opacity = 1;
+};
 
 ///////////////////////////////////////
 
@@ -38,27 +66,6 @@ const countriesContainer = document.querySelector('.countries');
 //     countriesContainer.insertAdjacentHTML('beforeend', html);
 //   });
 // };
-
-const renderCountryHTML = function (data, className = '') {
-  const html = `<article class="country ${className}">
-          <img class="country__img " src="${data.flags.svg}" />
-          <div class="country__data">
-            <h3 class="country__name">${data.name.common}</h3>
-            <h4 class="country__region">${data.region}</h4>
-            <p class="country__row"><span>👫</span>${(
-              +data.population / 1000000
-            ).toFixed(1)}M</p>
-            <p class="country__row"><span>🗣️</span>${
-              data.languages[Object.keys(data.languages)[0]]
-            }</p>
-            <p class="country__row"><span>💰</span>${
-              data.currencies[Object.keys(data.currencies)[0]].name
-            }</p>
-          </div>
-        </article>`;
-
-  countriesContainer.insertAdjacentHTML('beforeend', html);
-};
 
 // const getCountryAndNeighbour = function (country) {
 //   // Creating new AJAX request
@@ -99,6 +106,7 @@ const renderCountryHTML = function (data, className = '') {
 // Modern way
 
 // Country 1
+const getCountryData = function (country) {
   fetch(`https://restcountries.com/v3.1/name/${country}`)
     .then(response => response.json())
     .then(data => {
@@ -109,7 +117,16 @@ const renderCountryHTML = function (data, className = '') {
       return fetch(`https://restcountries.com/v3.1/alpha/${neighbour}`);
     })
     .then(response => response.json())
-    .then(data => renderCountryHTML(data[0], 'neighbour'));
+    .then(data => renderCountryHTML(data[0], 'neighbour'))
+    .catch(err => {
+      console.error(`😡😡😡 ${err.message}`);
+      renderError(err.message);
+    })
+    .finally(() => {
+      countriesContainer.style.opacity = 1;
+    });
 };
 
-getCountryData('Poland');
+btn.addEventListener('click', function () {
+  getCountryData('Poland');
+});
