@@ -99,7 +99,6 @@ const renderCountryHTML = function (data, className = '') {
 // Modern way
 
 // Country 1
-const getCountryData = function (country) {
   fetch(`https://restcountries.com/v3.1/name/${country}`)
     .then(response => response.json())
     .then(data => {
@@ -110,7 +109,7 @@ const getCountryData = function (country) {
       return fetch(`https://restcountries.com/v3.1/alpha/${neighbour}`);
     })
     .then(response => response.json())
-    .then(data => renderCountryHTML(data[0]));
+    .then(data => renderCountryHTML(data[0], 'neighbour'));
 };
 
 getCountryData('Poland');
