@@ -192,7 +192,7 @@ const whereAmI = function (lat, lng) {
   fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`)
     .then(response => {
       if (!response.ok)
-        throw new Error(`Couldn't match coordinates [${response.status}]`);
+        throw new Error(`Problem with geocoding [${response.status}]`);
       return response.json();
     })
     .then(data => {
@@ -200,7 +200,7 @@ const whereAmI = function (lat, lng) {
       return data.country;
     })
     .then(country => getCountryData(country))
-    .catch(err => console.error(err));
+    .catch(err => console.error(err.message));
 };
 
 btn.addEventListener('click', function () {
