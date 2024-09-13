@@ -105,54 +105,29 @@ const renderError = function (msg) {
 
 // Modern way
 
-const getJSON = function (url, errMsg = 'Something went wrong') {
-  return fetch(`${url}`).then(response => {
-    if (!response.ok) {
-      throw new Error(`${errMsg} (${response.status})`);
-    }
-    return response.json();
-  });
-};
-
-const getCountryData = function (country) {
-  // Country 1
-  getJSON(`https://restcountries.com/v3.1/name/${country}`, 'Country not found')
-    .then(data => {
-      renderCountryHTML(data[0]);
-
-      // Country 2
-      const neighbour = data[0].borders?.[0];
-      if (!neighbour) throw new Error('No neighbour found');
-      return getJSON(
-        `https://restcountries.com/v3.1/alpha/${neighbour}`,
-        'Country not found'
-      );
-    })
-    .then(data => renderCountryHTML(data[0], 'neighbour'))
-    .catch(err => {
-      console.error(`😡😡😡 ${err.message}`);
-      renderError(err.message);
-    })
-    .finally(() => {
-      countriesContainer.style.opacity = 1;
-    });
-};
-
-btn.addEventListener('click', function () {
-  getCountryData('Australia');
-});
+// const getJSON = function (url, errMsg = 'Something went wrong') {
+//   return fetch(`${url}`).then(response => {
+//     if (!response.ok) {
+//       throw new Error(`${errMsg} (${response.status})`);
+//     }
+//     return response.json();
+//   });
+// };
 
 // const getCountryData = function (country) {
-//   fetch(`https://restcountries.com/v3.1/name/${country}`)
-//     .then(response => response.json())
+//   // Country 1
+//   getJSON(`https://restcountries.com/v3.1/name/${country}`, 'Country not found')
 //     .then(data => {
 //       renderCountryHTML(data[0]);
 
 //       // Country 2
 //       const neighbour = data[0].borders?.[0];
-//       return fetch(`https://restcountries.com/v3.1/alpha/${neighbour}`);
+//       if (!neighbour) throw new Error('No neighbour found');
+//       return getJSON(
+//         `https://restcountries.com/v3.1/alpha/${neighbour}`,
+//         'Country not found'
+//       );
 //     })
-//     .then(response => response.json())
 //     .then(data => renderCountryHTML(data[0], 'neighbour'))
 //     .catch(err => {
 //       console.error(`😡😡😡 ${err.message}`);
@@ -164,5 +139,70 @@ btn.addEventListener('click', function () {
 // };
 
 // btn.addEventListener('click', function () {
+//   getCountryData('Australia');
+// });
+
+// btn.addEventListener('click', function () {
 //   getCountryData('Poland');
 // });
+
+// Coding Challenge 1
+
+// const whereAmI = function (lat, lng) {
+//   fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`)
+//     .then(response => response.json())
+//     .then(data => {
+//       if (data.city === 'Throttled! See geocode.xyz/pricing')
+//         throw new Error('Throttled');
+//       console.log(`You are in ${data.city}, ${data.country}`);
+//       return data.country;
+//     })
+//     .ren)
+//     .catch(err => console.error(err));
+// };
+
+// Displaying country information
+const getCountryData = function (country) {
+  // Main country
+  fetch(`https://restcountries.com/v3.1/name/${country}`)
+    .then(response => {
+      if (!response.ok)
+        throw new Error(`Country not found [${response.status}]`);
+      return response.json();
+    })
+    .then(data => {
+      renderCountryHTML(data[0]);
+
+      // neighbouring country
+      const neighbour = data[0].borders?.[0];
+      return fetch(`https://restcountries.com/v3.1/alpha/${neighbour}`);
+    })
+    .then(response => response.json())
+    .then(data => renderCountryHTML(data[0], 'neighbour'))
+    .catch(err => {
+      console.error(`😡😡😡 ${err.message}`);
+    })
+    .finally(() => {
+      countriesContainer.style.opacity = 1;
+    });
+};
+
+// Reverse geolocation
+const whereAmI = function (lat, lng) {
+  fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`)
+    .then(response => {
+      if (!response.ok)
+        throw new Error(`Couldn't match coordinates [${response.status}]`);
+      return response.json();
+    })
+    .then(data => {
+      if (data.country) console.log(`You are in ${data.city}, ${data.country}`);
+      return data.country;
+    })
+    .then(country => getCountryData(country))
+    .catch(err => console.error(err));
+};
+
+btn.addEventListener('click', function () {
+  whereAmI(-33.933, 18.474);
+});
